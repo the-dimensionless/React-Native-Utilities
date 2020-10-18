@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Animated, StyleSheet, LayoutAnimation, UIManager, Dimensions, Alert } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
+import Header from './Header';
 
 const USE_NATIVE_DRIVER = true;
 const { height } = Dimensions.get("window");
@@ -9,14 +10,9 @@ const safeHeight = height * 0.2;
 
 const SimpleDragNDrop = () => {
 
-    useEffect(() => {
-        if (Platform.OS === 'android') {
-            UIManager.setLayoutAnimationEnabledExperimental(true);
-        }
-        LayoutAnimation.spring();
-    });
-
     let dragItem = React.createRef();
+    let childRef = useRef();
+
     let [color, setColor] = useState('#32cd32');
     let translateX = new Animated.Value(150);
     let translateY = new Animated.Value(150);
@@ -45,9 +41,13 @@ const SimpleDragNDrop = () => {
 
             console.log();
             if (isTargetArea(lastOffset.x, lastOffset.y)) {
-                Alert.alert('In Activated Area');
+                //Alert.alert('In Activated Area');
+                //setColor('red');
+                childRef.current.showAlert('red');
             } else {
-                Alert.alert('In Safe Area');
+                //Alert.alert('In Safe Area');
+                //setColor('#32cd32');
+                childRef.current.showAlert('#32cd32');
             }
         }
     }
@@ -67,9 +67,10 @@ const SimpleDragNDrop = () => {
 
     return (<>
         <View style={{ flex: 1, width: '100%' }}>
-            <View style={[styles.topContainer, { backgroundColor: color }]}>
+            {/*  <View style={[styles.topContainer, { backgroundColor: color }]}>
                 <Text style={{ fontSize: 23 }}> Drag to Activate!</Text>
-            </View>
+            </View> */}
+            <Header ref={childRef} />
             <View>
                 <PanGestureHandler
                     onGestureEvent={onPanGestureEvent}
