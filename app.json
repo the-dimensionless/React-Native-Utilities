@@ -1,0 +1,12 @@
+{
+  "name": "utilities",
+  "displayName": "utilities",
+  "expo": {
+    "name": "utilities",
+    "slug": "utilities",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
