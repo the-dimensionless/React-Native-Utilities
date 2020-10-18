@@ -1,8 +1,11 @@
 import React from 'react';
-import { View, Text, Animated, PanResponder, StyleSheet } from 'react-native';
+import { View, Text, Animated, PanResponder, StyleSheet, Dimensions } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 
 const USE_NATIVE_DRIVER = true;
+const { height } = Dimensions.get("window");
+
+const safeHeight = height
 
 const SimpleDragNDrop = () => {
 
@@ -32,6 +35,8 @@ const SimpleDragNDrop = () => {
             translateX.setValue(0);
             translateY.setOffset(lastOffset.y);
             translateY.setValue(0);
+            console.log('Current X', translateX);
+            console.log('Current Y', translateY);
         }
     }
 
@@ -41,31 +46,51 @@ const SimpleDragNDrop = () => {
         ]
     }
 
-    return (
-        <PanGestureHandler
-            onGestureEvent={onPanGestureEvent}
-            onHandlerStateChange={onPanStateChangeHandler}
-            ref={dragItem}
-            shouldCancelWhenOutside={true}
-        >
-            <Animated.View style={[panStyle, styles.container]}>
-                <Text style={[
-                    styles.text
-                ]}>
-                    Hello I am text!
+    const isTargetArea = (positionX, positionY) => {
+
+    }
+
+    return (<>
+        <View style={styles.topContainer}>
+            <Text style={{ fontSize: 23 }}> Drag to Activate!</Text>
+        </View>
+        <View style={{ flex: 0.8 }}>
+            <PanGestureHandler
+                onGestureEvent={onPanGestureEvent}
+                onHandlerStateChange={onPanStateChangeHandler}
+                ref={dragItem}
+                shouldCancelWhenOutside={true}
+            >
+                <Animated.View style={[panStyle, styles.container]}>
+                    <Text style={[
+                        styles.text
+                    ]}>
+                        Item!
                                 </Text>
-            </Animated.View>
-        </PanGestureHandler>
+                </Animated.View>
+            </PanGestureHandler>
+        </View>
+    </>
     );
-};
+}
 
 const styles = StyleSheet.create({
+    topContainer: {
+        flex: 0.2,
+        backgroundColor: '#32cd32',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: height,
+        width: '100%',
+    },
     container: {
         position: 'absolute',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'yellow',
-        height: 200
+        height: 100,
+        width: 100,
+        borderRadius: 50
     },
     text: {
         fontSize: 23
