@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, Animated, StyleSheet, Dimensions } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Animated, StyleSheet, LayoutAnimation, UIManager, Dimensions, Alert } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 
 const USE_NATIVE_DRIVER = true;
@@ -9,12 +9,18 @@ const safeHeight = height * 0.2;
 
 const SimpleDragNDrop = () => {
 
-    let dragItem = React.createRef();
-    const [color, setColor] = useState('#32cd32');
+    useEffect(() => {
+        if (Platform.OS === 'android') {
+            UIManager.setLayoutAnimationEnabledExperimental(true);
+        }
+        LayoutAnimation.spring();
+    });
 
-    let translateX = new Animated.Value(0);
-    let translateY = new Animated.Value(0);
-    let lastOffset = { x: 0, y: 0 };
+    let dragItem = React.createRef();
+    let [color, setColor] = useState('#32cd32');
+    let translateX = new Animated.Value(150);
+    let translateY = new Animated.Value(150);
+    let lastOffset = { x: 150, y: 150 };
 
     let onPanGestureEvent = Animated.event(
         [
@@ -39,9 +45,9 @@ const SimpleDragNDrop = () => {
 
             console.log();
             if (isTargetArea(lastOffset.x, lastOffset.y)) {
-                setColor('red');
+                Alert.alert('In Activated Area');
             } else {
-                setColor('#32cd32');
+                Alert.alert('In Safe Area');
             }
         }
     }
@@ -53,33 +59,33 @@ const SimpleDragNDrop = () => {
     }
 
     const isTargetArea = (positionX, positionY) => {
-        // console.log('danger zone ', safeHeight);
         if (positionY < 0) {
-            // console.log('IN ACTIVATION AREA!!!');
             return true;
         }
         return false;
     }
 
     return (<>
-        <View style={[styles.topContainer, { backgroundColor: color }]}>
-            <Text style={{ fontSize: 23 }}> Drag to Activate!</Text>
-        </View>
-        <View style={{ flex: 0.8 }}>
-            <PanGestureHandler
-                onGestureEvent={onPanGestureEvent}
-                onHandlerStateChange={onPanStateChangeHandler}
-                ref={dragItem}
-                shouldCancelWhenOutside={true}
-            >
-                <Animated.View style={[panStyle, styles.container]}>
-                    <Text style={[
-                        styles.text
-                    ]}>
-                        Item!
+        <View style={{ flex: 1, width: '100%' }}>
+            <View style={[styles.topContainer, { backgroundColor: color }]}>
+                <Text style={{ fontSize: 23 }}> Drag to Activate!</Text>
+            </View>
+            <View>
+                <PanGestureHandler
+                    onGestureEvent={onPanGestureEvent}
+                    onHandlerStateChange={onPanStateChangeHandler}
+                    ref={dragItem}
+                    shouldCancelWhenOutside={true}
+                >
+                    <Animated.View style={[panStyle, styles.container]}>
+                        <Text style={[
+                            styles.text
+                        ]}>
+                            Item!
                                 </Text>
-                </Animated.View>
-            </PanGestureHandler>
+                    </Animated.View>
+                </PanGestureHandler>
+            </View>
         </View>
     </>
     );
@@ -87,8 +93,7 @@ const SimpleDragNDrop = () => {
 
 const styles = StyleSheet.create({
     topContainer: {
-        flex: 0.2,
-        // backgroundColor: '#32cd32',
+        height: 120,
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
