@@ -1,15 +1,16 @@
-import React from 'react';
-import { View, Text, Animated, PanResponder, StyleSheet, Dimensions } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Animated, StyleSheet, Dimensions } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 
 const USE_NATIVE_DRIVER = true;
 const { height } = Dimensions.get("window");
 
-const safeHeight = height
+const safeHeight = height * 0.2;
 
 const SimpleDragNDrop = () => {
 
     let dragItem = React.createRef();
+    const [color, setColor] = useState('#32cd32');
 
     let translateX = new Animated.Value(0);
     let translateY = new Animated.Value(0);
@@ -35,8 +36,13 @@ const SimpleDragNDrop = () => {
             translateX.setValue(0);
             translateY.setOffset(lastOffset.y);
             translateY.setValue(0);
-            console.log('Current X', translateX);
-            console.log('Current Y', translateY);
+
+            console.log();
+            if (isTargetArea(lastOffset.x, lastOffset.y)) {
+                setColor('red');
+            } else {
+                setColor('#32cd32');
+            }
         }
     }
 
@@ -47,11 +53,16 @@ const SimpleDragNDrop = () => {
     }
 
     const isTargetArea = (positionX, positionY) => {
-
+        // console.log('danger zone ', safeHeight);
+        if (positionY < 0) {
+            // console.log('IN ACTIVATION AREA!!!');
+            return true;
+        }
+        return false;
     }
 
     return (<>
-        <View style={styles.topContainer}>
+        <View style={[styles.topContainer, { backgroundColor: color }]}>
             <Text style={{ fontSize: 23 }}> Drag to Activate!</Text>
         </View>
         <View style={{ flex: 0.8 }}>
@@ -77,10 +88,9 @@ const SimpleDragNDrop = () => {
 const styles = StyleSheet.create({
     topContainer: {
         flex: 0.2,
-        backgroundColor: '#32cd32',
+        // backgroundColor: '#32cd32',
         justifyContent: 'center',
         alignItems: 'center',
-        height: height,
         width: '100%',
     },
     container: {
